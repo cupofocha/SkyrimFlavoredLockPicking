@@ -15,6 +15,10 @@ public class LockPickerAgent : Agent
     [SerializeField] private float rangeSize = 40f;
     [SerializeField] private float lockPickerDurability = 100f;
     [SerializeField] private float lockPickerDurabilityLoss = 1f;
+    [SerializeField] private Transform RR0A;
+    [SerializeField] private Transform RR1A;
+    [SerializeField] private Transform CR0A;
+    [SerializeField] private Transform CR1A;
     private float[] rotatableRange = {0f, 0f};
     private float[] correctRange = {0f, 0f};
 
@@ -105,6 +109,10 @@ public class LockPickerAgent : Agent
         rotatableRange[1] = rotatableRange[0] + rangeSize;
         correctRange[0] = rotatableRange[0] + rangeOffset;
         correctRange[1] = rotatableRange[1] - rangeOffset;
+        RR0A.rotation = Quaternion.Euler(new Vector3(0, rotatableRange[0] + 180f, 0));
+        RR1A.rotation = Quaternion.Euler(new Vector3(0, rotatableRange[1] + 180f, 0));
+        CR0A.rotation = Quaternion.Euler(new Vector3(0, correctRange[0] + 180f, 0));
+        CR1A.rotation = Quaternion.Euler(new Vector3(0, correctRange[1] + 180f, 0));
         Debug.Log(rotatableRange[0]);
         Debug.Log(rotatableRange[1]);
     }
@@ -128,7 +136,7 @@ public class LockPickerAgent : Agent
                 else
                 {
                    //Debug.Log("Y: " + y + " rotatableRange[0]: " + rotatableRange[0]);
-                    return 90f * ((rotatableRange[0] - y) / rangeOffset);
+                    return 90f * ((y - rotatableRange[0]) / rangeOffset);
                 }
             }
         }
