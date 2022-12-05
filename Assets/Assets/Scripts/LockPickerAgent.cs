@@ -53,13 +53,13 @@ public class LockPickerAgent : Agent
         pickLock(pickLockFlag);
         if(lockPickerDurability <= 0f)
         {
-            AddReward(-20f);
+            AddReward(-40f);
             backgroundMeshRenderer.material = loseMaterial;
             EndEpisode();
         }
         if(Mathf.Abs(lockTransform.eulerAngles.y) >= 90f)
         {
-            AddReward(+100f);
+            AddReward(+200f);
             backgroundMeshRenderer.material = winMaterial;
             EndEpisode();
         }
@@ -97,7 +97,7 @@ public class LockPickerAgent : Agent
             if (degree == 0f)
             {
                 lockPickerDurability -= lockPickerDurabilityLoss;
-                AddReward(-0.7f);
+                AddReward(-0.5f);
             }
             else
             {
@@ -106,7 +106,7 @@ public class LockPickerAgent : Agent
                     rotatable = true;
                     lockTransform.Rotate(0, -Time.deltaTime * defualtPickingSpeed, 0);
                     shivTransform.Rotate(0, -Time.deltaTime * defualtPickingSpeed, 0);
-                    AddReward(+3f);
+                    AddReward(+5f);
                 }
                 else
                 {
