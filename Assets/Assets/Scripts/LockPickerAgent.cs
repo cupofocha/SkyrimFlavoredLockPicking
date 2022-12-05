@@ -23,6 +23,7 @@ public class LockPickerAgent : Agent
         transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
         lockTransform.rotation = Quaternion.Euler(new Vector3(0, 0, 180));
         shivTransform.rotation = Quaternion.Euler(new Vector3(0, 0, 180));
+        lockPickerDurability = 100f;
         initRange();
     }
 
@@ -40,6 +41,17 @@ public class LockPickerAgent : Agent
 
         rotate(rotateLockPicker);
         pickLock(pickLockFlag);
+        if(lockPickerDurability <= 0f)
+        {
+            AddReward(-100f);
+            EndEpisode();
+        }
+        if(Mathf.Abs(lockTransform.eulerAngles.y) >= 90f)
+        {
+            AddReward(200f);
+            EndEpisode();
+        }
+        AddReward(-1f);
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -77,6 +89,7 @@ public class LockPickerAgent : Agent
                 {
                     lockTransform.Rotate(0, -Time.deltaTime * defualtPickingSpeed, 0);
                     shivTransform.Rotate(0, -Time.deltaTime * defualtPickingSpeed, 0);
+                    AddReward(2f);
                 }
                 else
                 {
