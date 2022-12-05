@@ -19,11 +19,13 @@ public class LockPickerAgent : Agent
     [SerializeField] private Transform RR1A;
     [SerializeField] private Transform CR0A;
     [SerializeField] private Transform CR1A;
+    private bool rotatable = false;
     private float[] rotatableRange = {0f, 0f};
     private float[] correctRange = {0f, 0f};
 
     public override void OnEpisodeBegin()
     {
+        rotatable = false;
         transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
         lockTransform.rotation = Quaternion.Euler(new Vector3(0, 0, 180));
         shivTransform.rotation = Quaternion.Euler(new Vector3(0, 0, 180));
@@ -36,6 +38,7 @@ public class LockPickerAgent : Agent
         sensor.AddObservation(transform.eulerAngles.y);
         sensor.AddObservation(lockTransform.eulerAngles.y);
         sensor.AddObservation(lockPickerDurability);
+        sensor.AddObservation(rotatable);
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -52,7 +55,7 @@ public class LockPickerAgent : Agent
         }
         if(Mathf.Abs(lockTransform.eulerAngles.y) >= 90f)
         {
-            AddReward(200f);
+            AddReward(+200f);
             EndEpisode();
         }
         AddReward(-1f);
@@ -91,12 +94,14 @@ public class LockPickerAgent : Agent
             {
                 if(Mathf.Abs(lockTransform.eulerAngles.y) <= degree)
                 {
+                    rotatable = true;
                     lockTransform.Rotate(0, -Time.deltaTime * defualtPickingSpeed, 0);
                     shivTransform.Rotate(0, -Time.deltaTime * defualtPickingSpeed, 0);
-                    AddReward(2f);
+                    AddReward(+2f);
                 }
                 else
                 {
+                    rotatable = false;
                     lockPickerDurability -= lockPickerDurabilityLoss;
                 }
             }
