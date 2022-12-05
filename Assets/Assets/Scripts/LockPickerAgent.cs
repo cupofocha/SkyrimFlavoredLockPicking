@@ -29,7 +29,7 @@ public class LockPickerAgent : Agent
     public override void OnEpisodeBegin()
     {
         rotatable = false;
-        transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
+        transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
         lockTransform.rotation = Quaternion.Euler(new Vector3(0, 0, 180));
         shivTransform.rotation = Quaternion.Euler(new Vector3(0, 0, 180));
         lockPickerDurability = 100f;
@@ -53,7 +53,7 @@ public class LockPickerAgent : Agent
         pickLock(pickLockFlag);
         if(lockPickerDurability <= 0f)
         {
-            AddReward(-10f);
+            AddReward(-20f);
             backgroundMeshRenderer.material = loseMaterial;
             EndEpisode();
         }
@@ -63,7 +63,7 @@ public class LockPickerAgent : Agent
             backgroundMeshRenderer.material = winMaterial;
             EndEpisode();
         }
-        AddReward(-0.2f);
+        AddReward(-0.5f);
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -97,7 +97,7 @@ public class LockPickerAgent : Agent
             if (degree == 0f)
             {
                 lockPickerDurability -= lockPickerDurabilityLoss;
-                AddReward(-1f);
+                AddReward(-0.7f);
             }
             else
             {
@@ -112,7 +112,7 @@ public class LockPickerAgent : Agent
                 {
                     rotatable = false;
                     lockPickerDurability -= lockPickerDurabilityLoss;
-                    AddReward(+0.1f);
+                    AddReward(-0.2f);
                 }
             }
         }
