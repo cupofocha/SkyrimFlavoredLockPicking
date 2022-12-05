@@ -19,6 +19,9 @@ public class LockPickerAgent : Agent
     [SerializeField] private Transform RR1A;
     [SerializeField] private Transform CR0A;
     [SerializeField] private Transform CR1A;
+    [SerializeField] private MeshRenderer backgroundMeshRenderer;
+    [SerializeField] private Material winMaterial;
+    [SerializeField] private Material loseMaterial;
     private bool rotatable = false;
     private float[] rotatableRange = {0f, 0f};
     private float[] correctRange = {0f, 0f};
@@ -50,15 +53,17 @@ public class LockPickerAgent : Agent
         pickLock(pickLockFlag);
         if(lockPickerDurability <= 0f)
         {
-            AddReward(-100f);
+            AddReward(-10f);
+            backgroundMeshRenderer.material = loseMaterial;
             EndEpisode();
         }
         if(Mathf.Abs(lockTransform.eulerAngles.y) >= 90f)
         {
-            AddReward(+200f);
+            AddReward(+100f);
+            backgroundMeshRenderer.material = winMaterial;
             EndEpisode();
         }
-        AddReward(-1f);
+        AddReward(-0.2f);
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -78,7 +83,10 @@ public class LockPickerAgent : Agent
 
     private void rotate(float rotateSpeed)
     {
-        transform.Rotate(0, rotateSpeed * Time.deltaTime * defualtSpeed, 0);
+        if(rotateSpeed < 0 && transform.eulerAngles.y > 90)
+            transform.Rotate(0, rotateSpeed * Time.deltaTime * defualtSpeed, 0);
+        else if(rotateSpeed > 0 && transform.eulerAngles.y < 270)
+            transform.Rotate(0, rotateSpeed * Time.deltaTime * defualtSpeed, 0);
     }
 
     private void pickLock(int flag)
@@ -89,6 +97,7 @@ public class LockPickerAgent : Agent
             if (degree == 0f)
             {
                 lockPickerDurability -= lockPickerDurabilityLoss;
+                AddReward(-1f);
             }
             else
             {
@@ -97,12 +106,13 @@ public class LockPickerAgent : Agent
                     rotatable = true;
                     lockTransform.Rotate(0, -Time.deltaTime * defualtPickingSpeed, 0);
                     shivTransform.Rotate(0, -Time.deltaTime * defualtPickingSpeed, 0);
-                    AddReward(+2f);
+                    AddReward(+3f);
                 }
                 else
                 {
                     rotatable = false;
                     lockPickerDurability -= lockPickerDurabilityLoss;
+                    AddReward(+0.1f);
                 }
             }
         }
@@ -110,7 +120,7 @@ public class LockPickerAgent : Agent
 
     private void initRange()
     {
-        rotatableRange[0] = Random.Range(0f, 360f - rangeSize);
+        rotatableRange[0] = Random.Range(90f, 270f - rangeSize);
         rotatableRange[1] = rotatableRange[0] + rangeSize;
         correctRange[0] = rotatableRange[0] + rangeOffset;
         correctRange[1] = rotatableRange[1] - rangeOffset;
@@ -118,8 +128,6 @@ public class LockPickerAgent : Agent
         RR1A.rotation = Quaternion.Euler(new Vector3(0, rotatableRange[1] + 180f, 0));
         CR0A.rotation = Quaternion.Euler(new Vector3(0, correctRange[0] + 180f, 0));
         CR1A.rotation = Quaternion.Euler(new Vector3(0, correctRange[1] + 180f, 0));
-        Debug.Log(rotatableRange[0]);
-        Debug.Log(rotatableRange[1]);
     }
 
     private float rotatableDegree()
