@@ -67,7 +67,6 @@ public class LockPickerAgent : Agent
         if(flag == 1)
         {
             float degree = rotatableDegree();
-            Debug.Log(degree);
             if (degree == 0f)
             {
                 lockPickerDurability -= lockPickerDurabilityLoss;
@@ -89,7 +88,7 @@ public class LockPickerAgent : Agent
 
     private void initRange()
     {
-        rotatableRange[0] = Random.Range(-180f, 180f - rangeSize);
+        rotatableRange[0] = Random.Range(0f, 360f - rangeSize);
         rotatableRange[1] = rotatableRange[0] + rangeSize;
         correctRange[0] = rotatableRange[0] + rangeOffset;
         correctRange[1] = rotatableRange[1] - rangeOffset;
@@ -110,10 +109,12 @@ public class LockPickerAgent : Agent
             {
                 if(y > correctRange[0])
                 {
+                    //Debug.Log("Y: " + y + " rotatableRange[1]: " + rotatableRange[1]);
                     return 90f * ((rotatableRange[1] - y) / rangeOffset);
                 }
                 else
                 {
+                   //Debug.Log("Y: " + y + " rotatableRange[0]: " + rotatableRange[0]);
                     return 90f * ((rotatableRange[0] - y) / rangeOffset);
                 }
             }
