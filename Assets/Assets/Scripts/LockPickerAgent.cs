@@ -38,10 +38,10 @@ public class LockPickerAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(transform.eulerAngles.y);
-        sensor.AddObservation(lockTransform.eulerAngles.y);
-        sensor.AddObservation(lockPickerDurability);
-        sensor.AddObservation(rotatable);
+        sensor.AddObservation(transform.eulerAngles.y);//观察（observe）
+        sensor.AddObservation(lockTransform.eulerAngles.y);  //观察（observe）锁芯（lock）旋转了多少
+        sensor.AddObservation(lockPickerDurability);  //观察（observe）开锁器的耐久度
+        sensor.AddObservation(rotatable);  //观察（observe）锁心（lock）是否可以旋转
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -49,21 +49,21 @@ public class LockPickerAgent : Agent
         float rotateLockPicker = actions.ContinuousActions[0];
         int pickLockFlag = actions.DiscreteActions[0];
 
-        rotate(rotateLockPicker);
-        pickLock(pickLockFlag);
+        rotate(rotateLockPicker); //开锁器可旋转度数是 continuous action
+        pickLock(pickLockFlag);  //是否执行开锁动作是 discrete action
         if(lockPickerDurability <= 0f)
         {
-            AddReward(-40f);
-            backgroundMeshRenderer.material = loseMaterial;
-            EndEpisode();
-        }
+            AddReward(-40f);  //开锁器耐久度归零
+            backgroundMeshRenderer.material = loseMaterial;  //更换背景颜色  失败：红色
+            EndEpisode();  //开始新的episode
+        } 
         if(Mathf.Abs(lockTransform.eulerAngles.y) >= 90f)
         {
-            AddReward(+200f);
-            backgroundMeshRenderer.material = winMaterial;
-            EndEpisode();
+            AddReward(+200f);  //成功开锁
+            backgroundMeshRenderer.material = winMaterial;   //更换背景颜色  成功：绿色 
+            EndEpisode();  //开始新的episode
         }
-        AddReward(-0.5f);
+        AddReward(-0.5f);  // agent只要存在就会扣除reward，以保证它不会原地不动
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
